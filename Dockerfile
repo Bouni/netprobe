@@ -1,16 +1,28 @@
 # Dockerfile for netprobe_lite
 # https://github.com/plaintextpackets/netprobe_lite/
-FROM python:3.11-slim-bookworm
+FROM python:3.13-alpine
 
-COPY requirements.txt /netprobe_lite/requirements.txt
-
-# Install python/pip
 ENV PYTHONUNBUFFERED=1
-ENV PIP_DISABLE_PIP_VERSION_CHECK=on
 
-RUN apt-get update && apt-get install -y iputils-ping && apt-get install -y traceroute && apt-get clean \
-    && pip install -r /netprobe_lite/requirements.txt --break-system-packages
+# install ip utils to get a ping with jitter data in the output
+RUN apk add iputils
+
+# Install uv (https://github.com/astral-sh/uv)
+COPY --from=ghcr.io/astral-sh/uv:python3.13-alpine /usr/local/bin/uv /usr/local/bin/uvx /bin/
 
 WORKDIR /netprobe_lite
 
-ENTRYPOINT [ "/bin/bash", "./entrypoint.sh" ]
+COPY requirements.txt ./requirements.txt
+
+# create virtualenv and install packages
+RUN uv venv
+RUN uv pip install -r ./requirements.txt
+
+# copy python files into the container
+COPY entrypoint.sh ./entrypoint.sh
+COPY *.py ./
+COPY helpers ./helpers
+COPY config/__init__.py ./config/__init__.py
+COPY logs ./logs
+
+ENTRYPOINT [ "/bin/sh", "./entrypoint.sh" ]
