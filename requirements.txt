@@ -1,6 +1,0 @@
-prometheus_client==0.21.1
-requests==2.32.3
-redis==5.2.1
-python-dotenv==1.0.1
-dnspython==2.7.0
-speedtest-cli==2.1.3

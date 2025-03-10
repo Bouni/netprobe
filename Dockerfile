@@ -12,17 +12,14 @@ COPY --from=ghcr.io/astral-sh/uv:python3.13-alpine /usr/local/bin/uv /usr/local/
 
 WORKDIR /netprobe_lite
 
-COPY requirements.txt ./requirements.txt
+COPY pyproject.toml .
+COPY uv.lock .
 
-# create virtualenv and install packages
-RUN uv venv
-RUN uv pip install -r ./requirements.txt
+# install project
+RUN uv sync --frozen
 
 # copy python files into the container
 COPY entrypoint.sh ./entrypoint.sh
-COPY *.py ./
-COPY helpers ./helpers
-COPY config/__init__.py ./config/__init__.py
-COPY logs ./logs
+COPY src .
 
 ENTRYPOINT [ "/bin/sh", "./entrypoint.sh" ]
