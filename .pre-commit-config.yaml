@@ -1,9 +1,12 @@
 repos:
+  # Make sure uv.lock is up to date
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
     rev: 0.6.5
     hooks:
       - id: uv-lock
+
+  # make sure the code is linted and formated by ruff
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
     rev: v0.9.10
@@ -13,3 +16,9 @@ repos:
         args: [ --fix ]
       # Run the formatter.
       - id: ruff-format
+
+  # make sure there is no dead code in the project
+  - repo: https://github.com/albertas/deadcode
+    rev: 2.4.1
+    hooks:
+      - id: deadcode
