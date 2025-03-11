@@ -14,8 +14,6 @@ services:
       - ./config/redis/redis.conf:/etc/redis/redis.conf
     networks:
       - netprobe-net
-    ports:
-      - 6379:6379
     dns:
       - 8.8.8.8
       - 8.8.4.4      
@@ -31,8 +29,6 @@ services:
       - ./logs:/netprobe_lite/logs
     networks:
       - netprobe-net
-    ports:
-      - 5080:5000
     dns:
       - 8.8.8.8
       - 8.8.4.4      
