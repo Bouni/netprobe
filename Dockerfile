@@ -19,7 +19,6 @@ COPY uv.lock .
 RUN uv sync --frozen
 
 # copy python files into the container
-COPY entrypoint.sh ./entrypoint.sh
 COPY src .
 
 ENTRYPOINT [ "uv", "run", "main.py" ]
