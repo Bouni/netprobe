@@ -3,6 +3,7 @@
 # - Sets up logging config
 
 import logging
+from logging.handlers import RotatingFileHandler
 
 
 def setup_logging(filename):
@@ -18,7 +19,7 @@ def setup_logging(filename):
     )
 
     # Set the handler
-    fileHandler = logging.handlers.RotatingFileHandler(
+    fileHandler = RotatingFileHandler(
         filename=filename, maxBytes=5_000_000, backupCount=3
     )
 
