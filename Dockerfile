@@ -22,4 +22,4 @@ RUN uv sync --frozen
 COPY entrypoint.sh ./entrypoint.sh
 COPY src .
 
-ENTRYPOINT [ "/bin/sh", "./entrypoint.sh" ]
+ENTRYPOINT [ "uv", "run", "main.py" ]
