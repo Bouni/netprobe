@@ -1,0 +1,70 @@
+# CUSTOM VARIABLES
+# Notes:
+# 1. Do not change any variable names
+# 2. Read instructions carefully
+ping:
+  # Site target list
+  # - If modifying this list, make sure you limit to 5 websites and use the domain name as shown here
+  sites:
+    - google.com
+    - facebook.com
+    - twitter.com
+    - youtube.com
+    - amazon.com
+
+dns:
+  # DNS test site
+  # - This is the site which is resolved in DNS to test DNS servers, if modified only use one domain name
+  testsite: google.com
+  # DNS name servers
+  # - This is the list of DNS servers which are tested
+  # - Netprobe only supports 4 DNS servers, you can change the value of "DNS_NAMESERVER_4_IP" to test your own home DNS server
+  # - Note: do not change the value of "DNS_NAMESERVER_4"
+  nameservers:
+    - name: Google 
+      ip: 8.8.8.8
+    - name: Quad9
+      ip: 9.9.9.9
+    - name: CloudFlare
+      ip: 1.1.1.1
+    - name: My_DNS_Server # do not change this name
+      ip: 8.8.8.8 # Replace this IP with the DNS server you use at home
+
+health:
+  # Health Score Weights
+  # - These are the relative weights used to calculate your 'Internet Quality Score', they can be modified but must add up to 1.0
+  weight:
+    loss: 0.6 # Loss is 60% of score
+    latency: 0.15 # Latency is 15% of score
+    jitter: 0.2 # Jitter is 20% of score
+    dns_latency: 0.05 # DNS latency is 0.05 of score
+
+  # Health Score Thresholds
+  # - These threshold values are used in the calculation of your 'Internet Quality Score', they can be modified if required
+  threshold:
+    loss: 5 # 5% loss threshold as max
+    latency: 100 # 100ms latency threshold as max
+    jitter: 30 # 30ms jitter threshold as max
+    dns_latency: 100 # 100ms dns latency threshold as max
+
+# Speetest configuration (be very careful when running on a metered connection!)
+# - This configuration is for setting up a "speed test" or rather a test of your internet bandwidth.
+# - In order to test your upload and download bandwidth we use speedtest.net as source. So your client will connect there and upload and download some data.
+# - That also means that a random server is selected for the test (usually the nearest one)
+# - Setting the SPEEDTEST_INTERVAL too agressively will cause speedtest.net to block your requests, recommend 15 minutes (900 seconds) and above
+speed:
+  enabled: True # set this to "True" to enable speed test function
+  interval: 937 # interval on which the speedtest will run, in seconds - note using a prime number helps reduce the number of collisions between netprobe and speed tests
+
+presentation:
+  port: 5000
+  interface: 0.0.0.0
+
+redis:
+  url: netprobe-redis
+  port: 6379
+  password: password
+
+probe:
+  interval: 30
+  count: 50
