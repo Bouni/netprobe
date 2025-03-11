@@ -3,7 +3,6 @@ import subprocess
 import json
 from threading import Thread
 import dns.resolver
-import speedtest
 
 
 class NetworkCollector(object):  # Main network collection class
@@ -124,12 +123,10 @@ class Netprobe_Speedtest(object):  # Speed test class
         self.speedtest_stats = {"download": None, "upload": None}
 
     def netprobe_speedtest(self):
-        s = speedtest.Speedtest()
-        s.get_best_server()
-        download = s.download()
-        upload = s.upload()
+        result = subprocess.getoutput("speedtest-cli --json")
+        data = json.loads(result)
 
-        self.speedtest_stats = {"download": download, "upload": upload}
+        self.speedtest_stats = {"download": data["download"], "upload": data["upload"]}
 
     def collect(self):
         self.speedtest_stats = {"download": None, "upload": None}
