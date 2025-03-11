@@ -75,19 +75,19 @@ logging:
       level: INFO
   netprobe:
     console: 
-      level: DEBUG
+      level: INFO
     logfile: 
       level: INFO
       file: log/netprobe.log
   speedtest:
     console: 
-      level: DEBUG
+      level: INFO 
     logfile: 
       level: INFO
       file: log/speedtest.log
   metrics:
     console: 
-      level: DEBUG
+      level: INFO 
     logfile: 
       level: INFO
       file: log/metrics.log

@@ -16,7 +16,7 @@ class CustomCollector:
         self.cache = RedisConnect()
 
     def collect(self):
-        logger.info("Starting metric collection")
+        logger.debug("Starting metric collection")
         start_time = time.time()
 
         # Read data from Redis
@@ -33,7 +33,7 @@ class CustomCollector:
         yield from self._collect_speedtest_metrics(stats_speedtest)
         yield from self._calculate_health_score(stats_netprobe)
 
-        logger.info(f"Metric collection completed in {time.time() - start_time:.2f}s")
+        logger.debug(f"Metric collection completed in {time.time() - start_time:.2f}s")
 
     def _fetch_redis_data(self, key):
         """Retrieve and parse JSON data from Redis."""
