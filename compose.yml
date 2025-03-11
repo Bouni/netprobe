@@ -27,8 +27,6 @@ services:
     volumes:
       - ./config.yml:/netprobe_lite/config.yml
       - ./logs:/netprobe_lite/logs
-    env_file:
-      - .env
     environment:
       MODULE: "NETPROBE"
     networks:
@@ -46,8 +44,6 @@ services:
     volumes:
       - ./config.yml:/netprobe_lite/config.yml
       - ./logs:/netprobe_lite/logs
-    env_file:
-      - .env
     environment:
       MODULE: "SPEEDTEST"
     networks:
@@ -65,8 +61,6 @@ services:
     volumes:
       - ./config.yml:/netprobe_lite/config.yml
       - ./logs:/netprobe_lite/logs
-    env_file:
-      - .env
     environment:
       MODULE: "PRESENTATION"
     ports:
