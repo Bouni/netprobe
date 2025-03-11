@@ -25,6 +25,7 @@ services:
     build: .
     pull_policy: always
     volumes:
+      - ./config.yml:/netprobe_lite/config.yml
       - ./logs:/netprobe_lite/logs
     env_file:
       - .env
@@ -43,6 +44,7 @@ services:
     build: .
     pull_policy: always
     volumes:
+      - ./config.yml:/netprobe_lite/config.yml
       - ./logs:/netprobe_lite/logs
     env_file:
       - .env
@@ -61,6 +63,7 @@ services:
     build: .
     pull_policy: always
     volumes:
+      - ./config.yml:/netprobe_lite/config.yml
       - ./logs:/netprobe_lite/logs
     env_file:
       - .env
