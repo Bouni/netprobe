@@ -14,7 +14,7 @@ class RedisConnect:
     def __init__(self):
         # Load global variables
         self.r = redis.Redis(  # Connect to Redis
-            host=config.redis.url, port=config.redis.port
+            host=config.redis.url, port=config.redis.port, decode_responses=True
         )
 
     def redis_read(self, key):  # Read data from Redis
