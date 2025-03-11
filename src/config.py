@@ -1,7 +1,30 @@
 # Config loading and validation
 
+from typing import Optional
+
 import yaml
 from pydantic import BaseModel, ValidationError
+
+
+class ConsoleConfig(BaseModel):
+    level: str
+
+
+class LogFileConfig(BaseModel):
+    level: str
+    file: str
+
+
+class LoggerConfig(BaseModel):
+    console: ConsoleConfig
+    logfile: Optional[LogFileConfig] = None
+
+
+class LoggingConfig(BaseModel):
+    main: LoggerConfig
+    netprobe: LoggerConfig
+    speedtest: LoggerConfig
+    metrics: LoggerConfig
 
 
 class PingModel(BaseModel):
@@ -42,7 +65,7 @@ class SpeedModel(BaseModel):
     interval: int
 
 
-class PresentationModel(BaseModel):
+class MetricsModel(BaseModel):
     port: int
     interface: str
 
@@ -63,9 +86,10 @@ class ConfigModel(BaseModel):
     dns: DNSModel
     health: HealthModel
     speed: SpeedModel
-    presentation: PresentationModel
+    metrics: MetricsModel
     redis: RedisModel
     probe: ProbeModel
+    logging: LoggingConfig
 
 
 def load_config(file_path: str) -> dict:

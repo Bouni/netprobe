@@ -53,10 +53,10 @@ health:
 # - That also means that a random server is selected for the test (usually the nearest one)
 # - Setting the SPEEDTEST_INTERVAL too agressively will cause speedtest.net to block your requests, recommend 15 minutes (900 seconds) and above
 speed:
-  enabled: True # set this to "True" to enable speed test function
-  interval: 937 # interval on which the speedtest will run, in seconds - note using a prime number helps reduce the number of collisions between netprobe and speed tests
+  enabled: False # set this to "True" to enable speed test function
+  interval: 60 #937 # interval on which the speedtest will run, in seconds - note using a prime number helps reduce the number of collisions between netprobe and speed tests
 
-presentation:
+metrics:
   port: 5000
   interface: 0.0.0.0
 
@@ -68,3 +68,26 @@ redis:
 probe:
   interval: 30
   count: 50
+
+logging:
+  main:
+    console: 
+      level: INFO
+  netprobe:
+    console: 
+      level: DEBUG
+    logfile: 
+      level: INFO
+      file: log/netprobe.log
+  speedtest:
+    console: 
+      level: DEBUG
+    logfile: 
+      level: INFO
+      file: log/speedtest.log
+  metrics:
+    console: 
+      level: DEBUG
+    logfile: 
+      level: INFO
+      file: log/metrics.log
