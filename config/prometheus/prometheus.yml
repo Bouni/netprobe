@@ -17,6 +17,6 @@ scrape_configs:
     scrape_timeout: 25s
 
     static_configs:
-      - targets: ['presentation:5000']
+      - targets: ['netprobe:5000']
         labels:
           group: 'Home network'
