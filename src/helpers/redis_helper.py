@@ -3,21 +3,18 @@
 # Functions to help read and write from Redis
 
 
-from config import Config_Redis
-import redis
 import json
+
+import redis
+
+from config import config
 
 
 class RedisConnect:
     def __init__(self):
         # Load global variables
-
-        self.redis_url = Config_Redis.redis_url
-        self.redis_port = Config_Redis.redis_port
-        self.redis_password = Config_Redis.redis_password
-
         self.r = redis.Redis(  # Connect to Redis
-            host=self.redis_url, port=self.redis_port
+            host=config.redis.url, port=config.redis.port
         )
 
     def redis_read(self, key):  # Read data from Redis

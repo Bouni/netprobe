@@ -4,23 +4,19 @@ import time
 import json
 from helpers.network_helper import Netprobe_Speedtest
 from helpers.redis_helper import RedisConnect
-from config import Config_Netprobe
+from config import config
 from datetime import datetime
 from helpers.logging_helper import setup_logging
 
 if __name__ == "__main__":
     # Global Variables
-
-    speedtest_enabled = Config_Netprobe.speedtest_enabled
-    speedtest_interval = Config_Netprobe.speedtest_interval
-
     collector = Netprobe_Speedtest()
 
     # Logging Config
 
     logger = setup_logging("logs/speedtest.log")
 
-    if speedtest_enabled:
+    if config.speed.enabled:
         while True:
             try:
                 stats = collector.collect()
@@ -30,7 +26,7 @@ if __name__ == "__main__":
                 print("Error running speedtest")
                 logger.error("Error running speedtest")
                 logger.error(e)
-                time.sleep(speedtest_interval)  # Pause before retrying
+                time.sleep(config.speed.interval)  # Pause before retrying
                 continue
 
             # Connect to Redis
@@ -41,7 +37,7 @@ if __name__ == "__main__":
                 # Save Data to Redis
 
                 cache_interval = (
-                    speedtest_interval * 2
+                    config.speed.interval * 2
                 )  # Set the redis cache 2x longer than the speedtest interval
 
                 cache.redis_write("speedtest", json.dumps(stats), cache_interval)
@@ -52,7 +48,8 @@ if __name__ == "__main__":
                 logger.error("Could not connect to Redis")
                 logger.error(e)
 
-            time.sleep(speedtest_interval)
+            time.sleep(config.speed.interval)
 
     else:
+        logger.info("Speedtest disabled in config!")
         exit()

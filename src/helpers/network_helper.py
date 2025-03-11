@@ -6,14 +6,14 @@ import dns.resolver
 
 
 class NetworkCollector(object):  # Main network collection class
-    def __init__(self, sites, count, dns_test_site, nameservers_external):
+    def __init__(self, sites, count, dns_test_site, nameserver_list):
         self.sites = sites  # List of sites to ping
-        self.count = str(count)  # Number of pings
+        self.count = count  # Number of pings
         self.stats = []  # List of stat dicts
         self.dnsstats = []  # List of stat dicts
         self.dns_test_site = dns_test_site  # Site used to test DNS response times
         self.nameservers = []
-        self.nameservers = nameservers_external
+        self.nameservers = nameserver_list
 
     def pingtest(self, count, site):
         ping = subprocess.getoutput(
@@ -40,7 +40,7 @@ class NetworkCollector(object):  # Main network collection class
         my_resolver = dns.resolver.Resolver()
 
         server = []  # Resolver needs a list
-        server.append(nameserver[1])
+        server.append(nameserver.ip)
 
         try:
             my_resolver.nameservers = server
@@ -51,20 +51,20 @@ class NetworkCollector(object):  # Main network collection class
             dns_latency = round(answers.response.time * 1000, 2)
 
             dnsdata = {
-                "nameserver": nameserver[0],
-                "nameserver_ip": nameserver[1],
+                "nameserver": nameserver.name,
+                "nameserver_ip": nameserver.ip,
                 "latency": dns_latency,
             }
 
             self.dnsstats.append(dnsdata)
 
         except Exception as e:
-            print(f"Error performing DNS resolution on {nameserver}")
+            print(f"Error performing DNS resolution on {nameserver.name}")
             print(e)
 
             dnsdata = {
-                "nameserver": nameserver[0],
-                "nameserver_ip": nameserver[1],
+                "nameserver": nameserver.name,
+                "nameserver_ip": nameserver.ip,
                 "latency": 5000,
             }
 

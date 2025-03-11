@@ -4,21 +4,16 @@ import time
 import json
 from helpers.network_helper import NetworkCollector
 from helpers.redis_helper import RedisConnect
-from config import Config_Netprobe
+from config import config
 from datetime import datetime
 from helpers.logging_helper import setup_logging
 
 if __name__ == "__main__":
-    # Global Variables
-
-    probe_interval = Config_Netprobe.probe_interval
-    probe_count = Config_Netprobe.probe_count
-    sites = Config_Netprobe.sites
-    dns_test_site = Config_Netprobe.dns_test_site
-    nameservers_external = Config_Netprobe.nameservers
-
     collector = NetworkCollector(
-        sites, probe_count, dns_test_site, nameservers_external
+        config.ping.sites,
+        config.probe.count,
+        config.dns.testsite,
+        config.dns.nameservers,
     )
 
     # Logging Config
@@ -44,7 +39,7 @@ if __name__ == "__main__":
             # Save Data to Redis
 
             cache_interval = (
-                probe_interval + 15
+                config.probe.interval + 15
             )  # Set the redis cache TTL slightly longer than the probe interval
 
             cache.redis_write("netprobe", json.dumps(stats), cache_interval)
@@ -55,4 +50,4 @@ if __name__ == "__main__":
             logger.error("Could not connect to Redis")
             logger.error(e)
 
-        time.sleep(probe_interval)
+        time.sleep(config.probe.interval)

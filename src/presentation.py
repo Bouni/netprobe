@@ -1,12 +1,14 @@
 # Data presentation service (prometheus)
 
-import time
-from prometheus_client.core import GaugeMetricFamily, REGISTRY
-from prometheus_client import start_http_server
 import json
-from helpers.redis_helper import RedisConnect
+import time
+
+from prometheus_client import start_http_server
+from prometheus_client.core import REGISTRY, GaugeMetricFamily
+
+from config import config
 from helpers.logging_helper import setup_logging
-from config import Config_Presentation
+from helpers.redis_helper import RedisConnect
 
 # Logging config
 
@@ -25,8 +27,6 @@ class CustomCollector(object):
         except Exception as e:
             logger.error("Could not connect to Redis")
             logger.error(e)
-
-        if not cache:
             return
 
         # Retrieve Netprobe data
@@ -115,22 +115,22 @@ class CustomCollector(object):
 
         # Calculate overall health score
 
-        weight_loss = Config_Presentation.weight_loss  # Loss is 60% of score
-        weight_latency = Config_Presentation.weight_latency  # Latency is 15% of score
-        weight_jitter = Config_Presentation.weight_jitter  # Jitter is 20% of score
+        weight_loss = config.health.weight.loss  # Loss is 60% of score
+        weight_latency = config.health.weight.latency  # Latency is 15% of score
+        weight_jitter = config.health.weight.jitter  # Jitter is 20% of score
         weight_dns_latency = (
-            Config_Presentation.weight_dns_latency
+            config.health.weight.latency
         )  # DNS latency is 0.05 of score
 
-        threshold_loss = Config_Presentation.threshold_loss  # 5% loss threshold as max
+        threshold_loss = config.health.threshold.loss  # 5% loss threshold as max
         threshold_latency = (
-            Config_Presentation.threshold_latency
+            config.health.threshold.latency
         )  # 100ms latency threshold as max
         threshold_jitter = (
-            Config_Presentation.threshold_jitter
+            config.health.threshold.jitter
         )  # 30ms jitter threshold as max
         threshold_dns_latency = (
-            Config_Presentation.threshold_dns_latency
+            config.health.threshold.latency
         )  # 100ms dns latency threshold as max
 
         if average_loss / threshold_loss >= 1:
@@ -171,8 +171,8 @@ class CustomCollector(object):
 
 if __name__ == "__main__":
     start_http_server(
-        Config_Presentation.presentation_port,
-        addr=Config_Presentation.presentation_interface,
+        config.presentation.port,
+        addr=config.presentation.interface,
     )
 
     REGISTRY.register(CustomCollector())
