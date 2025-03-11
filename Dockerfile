@@ -5,7 +5,7 @@ FROM python:3.13-alpine
 ENV PYTHONUNBUFFERED=1
 
 # install ip utils to get a ping with jitter data in the output
-RUN apk add iputils
+RUN apk add iputils speedtest-cli
 
 # Install uv (https://github.com/astral-sh/uv)
 COPY --from=ghcr.io/astral-sh/uv:python3.13-alpine /usr/local/bin/uv /usr/local/bin/uvx /bin/
