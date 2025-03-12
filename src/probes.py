@@ -7,23 +7,17 @@ from dns.resolver import Resolver
 
 from config import config
 from helpers.logging import setup_logging
-from helpers.redis import RedisConnect
 
 
 class NetworkCollector:
-    def __init__(
-        self,
-        sites,
-        count,
-        dns_test_site,
-        nameserver_list,
-    ):
+    def __init__(self, sites, count, dns_test_site, nameserver_list, shared_data):
         self.sites = sites
         self.count = count
         self.pingstats = []
         self.dnsstats = []
         self.dns_test_site = dns_test_site
         self.nameservers = nameserver_list
+        self.shared_data = shared_data
         self.logger = setup_logging(config.logging.netprobe)
 
     def pingtest(self, count, site):
@@ -73,30 +67,19 @@ class NetworkCollector:
         return True
 
     def write_results(self):
-        # Write results to redis
-        try:
-            cache = RedisConnect()
-            cache_interval = (
-                config.probe.interval + 15
-            )  # Set the redis cache TTL slightly longer than the probe interval
-            cache.redis_write(
-                "netprobe",
-                {"stats": self.pingstats, "dns_stats": self.dnsstats},
-                cache_interval,
-            )
-            self.pingstats = []
-            self.dnsstats = []
-            self.logger.info("Netprobe stats successfully written to Redis")
-        except Exception as e:
-            self.logger.error("Could not connect to Redis")
-            self.logger.error(e)
+        self.shared_data["netprobe"] = {
+            "stats": self.pingstats,
+            "dns_stats": self.dnsstats,
+        }
+        self.pingstats = []
+        self.dnsstats = []
+        self.logger.debug("Netprobe stats written to shared object")
 
 
 class SpeedtestCollector:
-    def __init__(
-        self,
-    ):
+    def __init__(self, shared_data):
         self.speedstats = {}
+        self.shared_data = shared_data
         self.logger = setup_logging(config.logging.speedtest)
 
     def speedtest(self):
@@ -116,23 +99,13 @@ class SpeedtestCollector:
         return True
 
     def write_results(self):
-        # Write results to redis
-        try:
-            cache = RedisConnect()
-            cache_interval = (
-                config.speed.interval * 2
-            )  # Set the redis cache 2x longer than the speedtest interval
-            self.logger.debug(self.speedstats)
-            cache.redis_write("speedtest", self.speedstats, cache_interval)
-            self.speedstats = {}
-            self.logger.info("Stats successfully written to Redis for Speed Test")
-        except Exception as e:
-            self.logger.error("Could not connect to Redis")
-            self.logger.error(e)
+        self.shared_data["speedtest"] = self.speedstats
+        self.speedstats = {}
+        self.logger.debug("Speedstats written to shared object")
 
 
 def run_net_probe(collector, interval):
-    # Spawn probe threads, write the results to redis and wait for the configured interval
+    # Spawn probe threads, write the results to shared object and wait for the configured interval
     while True:
         threads = []
         for site in collector.sites:
@@ -157,7 +130,7 @@ def run_net_probe(collector, interval):
 
 
 def run_speed_probe(collector, interval):
-    # Run speedtest, write the results to redis and wait for the configured interval
+    # Run speedtest, write the results to the shared object and wait for the configured interval
     while True:
         collector.speedtest()
         collector.write_results()

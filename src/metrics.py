@@ -5,23 +5,22 @@ from prometheus_client.core import REGISTRY, GaugeMetricFamily
 
 from config import config
 from helpers.logging import setup_logging
-from helpers.redis import RedisConnect
 
 # Logging setup
 logger = setup_logging(config.logging.metrics)
 
 
 class CustomCollector:
-    def __init__(self):
-        self.cache = RedisConnect()
+    def __init__(self, shared_data):
+        self.shared_data = shared_data
 
     def collect(self):
         logger.debug("Starting metric collection")
         start_time = time.time()
 
-        # Read data from Redis
-        stats_netprobe = self._fetch_redis_data("netprobe")
-        stats_speedtest = self._fetch_redis_data("speedtest")
+        # Read data from shared object
+        stats_netprobe = self.shared_data.get("netprobe", {})
+        stats_speedtest = self.shared_data.get("speedtest", {})
 
         if not stats_netprobe:
             logger.warning("No netprobe data found in Redis")
@@ -30,19 +29,11 @@ class CustomCollector:
         # Create Prometheus metrics
         yield from self._collect_network_metrics(stats_netprobe)
         yield from self._collect_dns_metrics(stats_netprobe)
-        yield from self._collect_speedtest_metrics(stats_speedtest)
         yield from self._calculate_health_score(stats_netprobe)
+        if config.speed.enabled:
+            yield from self._collect_speedtest_metrics(stats_speedtest)
 
         logger.debug(f"Metric collection completed in {time.time() - start_time:.2f}s")
-
-    def _fetch_redis_data(self, key):
-        """Retrieve and parse JSON data from Redis."""
-        try:
-            raw_data = self.cache.redis_read(key)
-            return raw_data
-        except Exception as e:
-            logger.error(f"Failed to read {key} from Redis: {e}")
-            return None
 
     def _collect_network_metrics(self, stats_netprobe):
         """Collect network latency, loss, and jitter metrics."""
@@ -146,11 +137,11 @@ class CustomCollector:
         yield i
 
 
-def setup_metrics_server():
+def setup_metrics_server(shared_data):
     """Start the Prometheus metrics server with a singleton collector."""
     logger.info("Starting Prometheus metrics server...")
 
-    REGISTRY.register(CustomCollector())
+    REGISTRY.register(CustomCollector(shared_data))
 
     start_http_server(config.metrics.port, addr=config.metrics.interface)
     logger.info(
