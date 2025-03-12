@@ -70,12 +70,6 @@ class MetricsModel(BaseModel):
     interface: str
 
 
-class RedisModel(BaseModel):
-    url: str
-    port: int
-    password: str
-
-
 class ProbeModel(BaseModel):
     interval: int
     count: int
@@ -87,7 +81,6 @@ class ConfigModel(BaseModel):
     health: HealthModel
     speed: SpeedModel
     metrics: MetricsModel
-    redis: RedisModel
     probe: ProbeModel
     logging: LoggingConfig
 
