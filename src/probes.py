@@ -83,17 +83,21 @@ class SpeedtestCollector:
         self.logger = setup_logging(config.logging.speedtest)
 
     def speedtest(self):
-        # run the speedtest-cli binary and process the output
+        # run the speedtest-go binary and process the output
         try:
-            result = subprocess.getoutput("speedtest-cli --json")
+            result = subprocess.getoutput("speedtest-go --json")
             self.logger.debug(result)
             data = json.loads(result)
-            speeddata = {"download": data["download"], "upload": data["upload"]}
+            speeddata = {
+                "download": data["servers"][0]["dl_speed"] * 8,
+                "upload": data["servers"][0]["ul_speed"] * 8,
+            }
             self.logger.debug(speeddata)
             self.speedstats = speeddata
         except Exception as e:
             self.logger.error("Error performing speedtest.")
             self.logger.error(e)
+            self.logger.error(f"Raw output of speedtest-go was {result}")
             speeddata = {"download": None, "upload": None}
             self.speedstats = speeddata
         return True
