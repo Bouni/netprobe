@@ -23,7 +23,7 @@ class CustomCollector:
         stats_speedtest = self.shared_data.get("speedtest", {})
 
         if not stats_netprobe:
-            logger.warning("No netprobe data found in Redis")
+            logger.warning("No netprobe data available")
             return
 
         # Create Prometheus metrics
@@ -75,7 +75,7 @@ class CustomCollector:
     def _collect_speedtest_metrics(self, stats_speedtest):
         """Collect internet speed test metrics."""
         if not stats_speedtest:
-            logger.warning("No speedtest data found in Redis")
+            logger.warning("No speedtest data available")
             return
 
         s = GaugeMetricFamily(
