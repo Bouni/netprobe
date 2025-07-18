@@ -54,6 +54,7 @@ health:
 # - Setting the SPEEDTEST_INTERVAL too agressively will cause speedtest.net to block your requests, recommend 15 minutes (900 seconds) and above
 speed:
   enabled: False # set this to "True" to enable speed test function
+  provider: librespeed # set this to either speedtest or librespeed
   interval: 60 #937 # interval on which the speedtest will run, in seconds - note using a prime number helps reduce the number of collisions between netprobe and speed tests
 
 metrics:

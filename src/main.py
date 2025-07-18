@@ -20,7 +20,7 @@ if __name__ == "__main__":
             config.dns.nameservers,
             shared_data,
         )
-        speed_collector = SpeedtestCollector(shared_data)
+        speed_collector = SpeedtestCollector(config.speed.provider, shared_data)
 
         # Start netprobe thread
         threading.Thread(

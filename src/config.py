@@ -1,6 +1,6 @@
 # Config loading and validation
 
-from typing import Optional
+from typing import Optional, Literal
 
 import yaml
 from pydantic import BaseModel, ValidationError
@@ -62,6 +62,7 @@ class HealthModel(BaseModel):
 
 class SpeedModel(BaseModel):
     enabled: bool
+    provider: Literal["speedtest", "librespeed"]
     interval: int
 
 
