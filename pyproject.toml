@@ -16,3 +16,6 @@ dependencies = [
 dev = [
     "pre-commit>=4.1.0",
 ]
+
+[tool.ruff.lint]
+ignore = ["BLE001"]

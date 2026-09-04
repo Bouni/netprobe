@@ -1,6 +1,6 @@
 # Config loading and validation
 
-from typing import Optional, Literal
+from typing import Literal
 
 import yaml
 from pydantic import BaseModel, ValidationError
@@ -17,7 +17,7 @@ class LogFileConfig(BaseModel):
 
 class LoggerConfig(BaseModel):
     console: ConsoleConfig
-    logfile: Optional[LogFileConfig] = None
+    logfile: LogFileConfig | None = None
 
 
 class LoggingConfig(BaseModel):
