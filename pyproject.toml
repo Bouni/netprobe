@@ -5,7 +5,7 @@ description = "Simple and effective tool for measuring ISP performance at home."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "dnspython==2.7.0",
+    "dnspython==2.8.0",
     "prometheus-client==0.23.1",
     "pydantic>=2.10.6",
     "python-dotenv==1.2.1",
