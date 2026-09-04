@@ -77,21 +77,32 @@ class NetworkCollector:
 
 
 class SpeedtestCollector:
-    def __init__(self, shared_data):
+    def __init__(self, provider, shared_data):
         self.speedstats = {}
+        self.provider = provider
         self.shared_data = shared_data
         self.logger = setup_logging(config.logging.speedtest)
 
     def speedtest(self):
         # run the speedtest-go binary and process the output
         try:
-            result = subprocess.getoutput("speedtest-go --json")
-            self.logger.debug(result)
-            data = json.loads(result)
-            speeddata = {
-                "download": data["servers"][0]["dl_speed"] * 8,
-                "upload": data["servers"][0]["ul_speed"] * 8,
-            }
+            speeddata = {"download": None, "upload": None}
+            if self.provider == "speedtest":
+                result = subprocess.getoutput("speedtest-go --json")
+                self.logger.debug(result)
+                data = json.loads(result)
+                speeddata = {
+                    "download": data["servers"][0]["dl_speed"] * 8,
+                    "upload": data["servers"][0]["ul_speed"] * 8,
+                }
+            elif self.provider == "librespeed":
+                result = subprocess.getoutput("librespeed-cli --json")
+                self.logger.debug(result)
+                data = json.loads(result)
+                speeddata = {
+                    "download": data[0]["download"] * 1000 * 1000 * 100,
+                    "upload": data[0]["upload"] * 1000 * 1000 * 100,
+                }
             self.logger.debug(speeddata)
             self.speedstats = speeddata
         except Exception as e:

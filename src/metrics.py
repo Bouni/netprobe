@@ -57,7 +57,7 @@ class CustomCollector:
 
         # Average calculations
         count = len(stats_netprobe["stats"])
-        if count:
+        if count > 0:
             g.add_metric(["latency", "all"], total_latency / count)
             g.add_metric(["loss", "all"], total_loss / count)
             g.add_metric(["jitter", "all"], total_jitter / count)
